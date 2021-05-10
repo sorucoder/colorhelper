@@ -1,6 +1,6 @@
 # colorhelper
 
-`colorhelper` provides additional utilities for colors.
+`colorhelper` provides additional golang utilities for colors.
 
 ## Features
 
