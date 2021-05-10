@@ -204,7 +204,7 @@ func EqualColors(c1, c2 color.Color) bool {
 func PickBestTextColor(backgroundColor color.Color, textColors ...color.Color) color.Color {
 	backgroundColorRelativeLuminance := relativeLuminance(backgroundColor)
 	if len(textColors) == 0 {
-		if backgroundColorRelativeLuminance > math.Sqrt(1.05*0.05)-0.05 {
+		if backgroundColorRelativeLuminance > 0.179 {
 			return color.Black
 		} else {
 			return color.White
@@ -239,17 +239,17 @@ func ParseCSSColorRepresentation(colorRepresentation string) (color.Color, error
 	if hexTripletRegexp.MatchString(colorRepresentation) {
 		hexTripletValue := hexTripletRegexp.FindStringSubmatch(colorRepresentation)
 		var r, g, b uint8
-		if ri, err := strconv.ParseInt(hexTripletValue[1], 16, 8); err == nil {
+		if ri, err := strconv.ParseUint(hexTripletValue[1], 16, 8); err == nil {
 			r = uint8(ri)
 		} else {
 			return nil, fmt.Errorf("cannot parse red value %v of %v as hex triplet: %v", hexTripletValue[1], colorRepresentation, err)
 		}
-		if gi, err := strconv.ParseInt(hexTripletValue[2], 16, 8); err == nil {
+		if gi, err := strconv.ParseUint(hexTripletValue[2], 16, 8); err == nil {
 			g = uint8(gi)
 		} else {
 			return nil, fmt.Errorf("cannot parse green value %v of %v as hex triplet: %v", hexTripletValue[2], colorRepresentation, err)
 		}
-		if bi, err := strconv.ParseInt(hexTripletValue[3], 16, 8); err == nil {
+		if bi, err := strconv.ParseUint(hexTripletValue[3], 16, 8); err == nil {
 			b = uint8(bi)
 		} else {
 			return nil, fmt.Errorf("cannot parse blue value %v of %v as hex triplet: %v", hexTripletValue[3], colorRepresentation, err)

@@ -2,6 +2,7 @@ package colorhelper
 
 import (
 	"fmt"
+	"html/template"
 	"image/color"
 	"reflect"
 	"strings"
@@ -10,7 +11,7 @@ import (
 func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 	if len(args) >= 3 && len(args)%2 == 1 {
 		var sourceColorArgument string
-		if arg, ok := args[1].(string); ok {
+		if arg, ok := args[0].(string); ok {
 			sourceColorArgument = arg
 		} else {
 			return nil, fmt.Errorf("bad argument #1 (expected string, got %v)", reflect.TypeOf(args[1]))
@@ -38,14 +39,14 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorRGBA := color.RGBAModel.Convert(sourceColor).(color.RGBA)
 					sourceColorRGBA.R = uint8(colorParameterValue)
-					return MakeCSSColorRepresentation(sourceColorRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorRGBA, AnyRepresentation)), nil
 				case float64:
 					if colorParameterValue < 0.0 || colorParameterValue > 1.0 {
 						return nil, fmt.Errorf("bad argument #%v (invalid red value %v)", index+2, colorParameterValue)
 					}
 					sourceColorSRGBA := SRGBAModel.Convert(sourceColor).(SRGBA)
 					sourceColorSRGBA.R = colorParameterValue
-					return MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation)), nil
 				default:
 					return nil, fmt.Errorf("bad argument #%v (expected int64 or float64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -57,14 +58,14 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorRGBA := color.RGBAModel.Convert(sourceColor).(color.RGBA)
 					sourceColorRGBA.G = uint8(colorParameterValue)
-					return MakeCSSColorRepresentation(sourceColorRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorRGBA, AnyRepresentation)), nil
 				case float64:
 					if colorParameterValue < 0.0 || colorParameterValue > 1.0 {
 						return nil, fmt.Errorf("bad argument #%v (invalid red value %v)", index+2, colorParameterValue)
 					}
 					sourceColorSRGBA := SRGBAModel.Convert(sourceColor).(SRGBA)
 					sourceColorSRGBA.G = colorParameterValue
-					return MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation)), nil
 				default:
 					return nil, fmt.Errorf("bad argument #%v (expected int64 or float64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -76,14 +77,14 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorRGBA := color.RGBAModel.Convert(sourceColor).(color.RGBA)
 					sourceColorRGBA.B = uint8(colorParameterValue)
-					return MakeCSSColorRepresentation(sourceColorRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorRGBA, AnyRepresentation)), nil
 				case float64:
 					if colorParameterValue < 0.0 || colorParameterValue > 1.0 {
 						return nil, fmt.Errorf("bad argument #%v (invalid blue value %v)", index+2, colorParameterValue)
 					}
 					sourceColorSRGBA := SRGBAModel.Convert(sourceColor).(SRGBA)
 					sourceColorSRGBA.B = colorParameterValue
-					return MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation)), nil
 				default:
 					return nil, fmt.Errorf("bad argument #%v (expected int64 or float64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -94,7 +95,7 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorHSLA := HSLAModel.Convert(sourceColor).(HSLA)
 					sourceColorHSLA.H = float64(colorParameterValue)
-					return MakeCSSColorRepresentation(sourceColorHSLA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorHSLA, AnyRepresentation)), nil
 				} else {
 					return nil, fmt.Errorf("bad argument #%v (expected int64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -105,7 +106,7 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorHSLA := HSLAModel.Convert(sourceColor).(HSLA)
 					sourceColorHSLA.S = colorParameterValue
-					return MakeCSSColorRepresentation(sourceColorHSLA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorHSLA, AnyRepresentation)), nil
 				} else {
 					return nil, fmt.Errorf("bad argument #%v (expected int64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -116,7 +117,7 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorHSLA := HSLAModel.Convert(sourceColor).(HSLA)
 					sourceColorHSLA.S = colorParameterValue
-					return MakeCSSColorRepresentation(sourceColorHSLA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorHSLA, AnyRepresentation)), nil
 				} else {
 					return nil, fmt.Errorf("bad argument #%v (expected int64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -127,7 +128,7 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 					}
 					sourceColorSRGBA := SRGBAModel.Convert(sourceColor).(SRGBA)
 					sourceColorSRGBA.A = colorParameterValue
-					return MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation), nil
+					return template.CSS(MakeCSSColorRepresentation(sourceColorSRGBA, AnyRepresentation)), nil
 				} else {
 					return nil, fmt.Errorf("bad argument #%v (expected int64, got %v)", index+2, reflect.TypeOf(args[index+1]))
 				}
@@ -152,7 +153,7 @@ func PickBestTextColorTemplateFunc(args ...interface{}) (interface{}, error) {
 		}
 
 		if len(args) == 1 {
-			return MakeCSSColorRepresentation(PickBestTextColor(backgroundColor), AnyRepresentation), nil
+			return template.CSS(MakeCSSColorRepresentation(PickBestTextColor(backgroundColor), AnyRepresentation)), nil
 		} else {
 			var textColors []color.Color
 			for index := 1; index < len(args); index++ {
@@ -170,7 +171,7 @@ func PickBestTextColorTemplateFunc(args ...interface{}) (interface{}, error) {
 				}
 			}
 
-			return MakeCSSColorRepresentation(PickBestTextColor(backgroundColor, textColors...), AnyRepresentation), nil
+			return template.CSS(MakeCSSColorRepresentation(PickBestTextColor(backgroundColor, textColors...), AnyRepresentation)), nil
 		}
 	}
 	return nil, fmt.Errorf("invalid number of arguments given")
