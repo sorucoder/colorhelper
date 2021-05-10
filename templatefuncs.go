@@ -140,7 +140,7 @@ func TweakColorTemplateFunc(args ...interface{}) (interface{}, error) {
 func PickBestTextColorTemplateFunc(args ...interface{}) (interface{}, error) {
 	if len(args) >= 1 {
 		var backgroundColorArgument string
-		if arg, ok := args[1].(string); ok {
+		if arg, ok := args[0].(string); ok {
 			backgroundColorArgument = arg
 		} else {
 			return nil, fmt.Errorf("bad argument #1 (expected string, got %v)", reflect.TypeOf(args[1]))
