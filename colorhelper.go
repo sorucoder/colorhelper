@@ -1,3 +1,13 @@
+// colorhelper provides additional utilities for colors.
+//
+// When using methods that parse color representations, a "legal color representation" would include the following:
+//	* A hexadecimal triplet, with an optional hash prefix, in the form RRGGBB. e.g. #FF0000, FF0000
+//	* A hexadecimal quadruplet, with an optional hash prefix, in the form RRGGBBAA. e.g. #FF0000FF, FF0000FF
+//	* A CSS-style rgb() function call. Parses arguments as both integer [0-255] and percentage values [0%-100%] for each color channel. e.g. rgb(255, 0, 0), rgb(100%, 0%, 0%)
+//	* A CSS-style rgba() function call. Parses arguments as both integer [0-255] and percentage values [0%-100%] for each color channel, and a floating point [0.0-1.0] for alpha. e.g rgba(255, 0, 0, 1.0), rgba(100%, 0%, 0%, 1.0)
+//	* A CSS-style hsl() function call. Parses arguments as an integer [0-360] for hue, and percentage values [0%-100%] for saturation and lightness. e.g. hsl(0, 100%, 50%)
+//	* A CSS-style hsla() function call. Parses arguments as an integer [0-360] for hue, percentage values [0%-100%] for saturation and lightness, and a floating point [0.0-1.0] for alpha. e.g. hsla(0, 100%, 50%, 1.0)
+//	* One of the 140 HTML color names, case-insensitive. e.g. aliceblue, WhItESMOKE
 package colorhelper
 
 import (
@@ -232,10 +242,10 @@ func PickBestTextColor(backgroundColor color.Color, textColors ...color.Color) c
 	}
 }
 
-// ParseCSSColorRepresentation parses a legal CSS color value into a color.Color
+// ParseColorRepresentation parses a legal CSS color value into a color.Color
 // The model of the returned color will be the same as the value passed in
 // For example, if the CSS value uses the hsl() function, its color model will be colorhelper.HSLAModel
-func ParseCSSColorRepresentation(colorRepresentation string) (color.Color, error) {
+func ParseColorRepresentation(colorRepresentation string) (color.Color, error) {
 	if hexadecimalTripletRegexp.MatchString(colorRepresentation) {
 		hexTripletValue := hexadecimalTripletRegexp.FindStringSubmatch(colorRepresentation)
 		var r, g, b uint8
@@ -474,8 +484,8 @@ const (
 	HSLAFunctionRepresentation                           // hsla(h,s,l,a)
 )
 
-// MakeCSSColorRepresentation generates a legal CSS color value from a color.Color
-func MakeCSSColorRepresentation(colorValue color.Color, colorRepresentation int) string {
+// MakeColorRepresentation generates a legal color representation from a color.Color
+func MakeColorRepresentation(colorValue color.Color, colorRepresentation int) string {
 	switch colorRepresentation {
 	case HexadecimalTripletRepresentation:
 		colorRGBA := color.RGBAModel.Convert(colorValue).(color.RGBA)
