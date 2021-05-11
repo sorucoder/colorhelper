@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	hexTripletRegexp    *regexp.Regexp = regexp.MustCompile(`^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$`)
-	hexQuadrupletRegexp *regexp.Regexp = regexp.MustCompile(`^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$`)
-	rgbFunctionRegexp   *regexp.Regexp = regexp.MustCompile(`^rgb\(\s*(|\d+(?:\.\d+)?%)\s*,\s*(\d+|\d+(?:\.\d+)?%)\s*,\s*(?:\d+|\d+(?:\.\d+)?%)\s*\)$`)
-	rgbaFunctionRegexp  *regexp.Regexp = regexp.MustCompile(`^rgba\(\s*(\d+|\d+(?:\.\d+)?%)\s*,\s*(\d+|\d+(?:\.\d+)?%)\s*,\s*(?:\d+|\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?)\s*\)$`)
-	hslFunctionRegexp   *regexp.Regexp = regexp.MustCompile(`^hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*\(\d+(?:\.\d+)?%\)\s*\)$`)
-	hslaFunctionRegexp  *regexp.Regexp = regexp.MustCompile(`^hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*\(\d+(?:\.\d+)?%,\s*(\d+(?:\.\d+)?)\s*\)\s*\)$`)
+	hexadecimalTripletRegexp    *regexp.Regexp = regexp.MustCompile(`^#?([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$`)
+	hexadecimalQuadrupletRegexp *regexp.Regexp = regexp.MustCompile(`^#?([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$`)
+	rgbFunctionRegexp           *regexp.Regexp = regexp.MustCompile(`^rgb\(\s*(|\d+(?:\.\d+)?%)\s*,\s*(\d+|\d+(?:\.\d+)?%)\s*,\s*(?:\d+|\d+(?:\.\d+)?%)\s*\)$`)
+	rgbaFunctionRegexp          *regexp.Regexp = regexp.MustCompile(`^rgba\(\s*(\d+|\d+(?:\.\d+)?%)\s*,\s*(\d+|\d+(?:\.\d+)?%)\s*,\s*(?:\d+|\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?)\s*\)$`)
+	hslFunctionRegexp           *regexp.Regexp = regexp.MustCompile(`^hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*\(\d+(?:\.\d+)?%\)\s*\)$`)
+	hslaFunctionRegexp          *regexp.Regexp = regexp.MustCompile(`^hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*\(\d+(?:\.\d+)?%,\s*(\d+(?:\.\d+)?)\s*\)\s*\)$`)
 
 	colorNamesToColorValues map[string]color.Color = map[string]color.Color{
 		"aliceblue":            color.RGBA{0xF0, 0xF8, 0xFF, 0xFF},
@@ -236,8 +236,8 @@ func PickBestTextColor(backgroundColor color.Color, textColors ...color.Color) c
 // The model of the returned color will be the same as the value passed in
 // For example, if the CSS value uses the hsl() function, its color model will be colorhelper.HSLAModel
 func ParseCSSColorRepresentation(colorRepresentation string) (color.Color, error) {
-	if hexTripletRegexp.MatchString(colorRepresentation) {
-		hexTripletValue := hexTripletRegexp.FindStringSubmatch(colorRepresentation)
+	if hexadecimalTripletRegexp.MatchString(colorRepresentation) {
+		hexTripletValue := hexadecimalTripletRegexp.FindStringSubmatch(colorRepresentation)
 		var r, g, b uint8
 		if ri, err := strconv.ParseUint(hexTripletValue[1], 16, 8); err == nil {
 			r = uint8(ri)
@@ -255,8 +255,8 @@ func ParseCSSColorRepresentation(colorRepresentation string) (color.Color, error
 			return nil, fmt.Errorf("cannot parse blue value %v of %v as hex triplet: %v", hexTripletValue[3], colorRepresentation, err)
 		}
 		return color.RGBA{r, g, b, 0xFF}, nil
-	} else if hexQuadrupletRegexp.MatchString(colorRepresentation) {
-		hexQuadrupletValue := hexQuadrupletRegexp.FindStringSubmatch(colorRepresentation)
+	} else if hexadecimalQuadrupletRegexp.MatchString(colorRepresentation) {
+		hexQuadrupletValue := hexadecimalQuadrupletRegexp.FindStringSubmatch(colorRepresentation)
 		var r, g, b, a uint8
 		if ri, err := strconv.ParseUint(hexQuadrupletValue[1], 16, 8); err == nil {
 			r = uint8(ri)
@@ -463,22 +463,30 @@ func ParseCSSColorRepresentation(colorRepresentation string) (color.Color, error
 }
 
 const (
-	AnyRepresentation           int = iota // Use best representation based upon the color.Model of the color.Color
-	HexTripletRepresentation               // #xxxxxx
-	HexQuadrupletRepresentation            // #xxxxxxxx
-	RGBFunctionRepresentation              // rgb(r,g,b)
-	RGBAFunctionRepresentation             // rgba(r,g,b,a)
-	HSLFunctionRepresentation              // hsl(h,s,l)
-	HSLAFunctionRepresentation             // hsla(h,s,l,a)
+	AnyRepresentation                         int = iota // Use best representation based upon the color.Model of the color.Color
+	HexadecimalTripletRepresentation                     // xxxxxx
+	HexadecimalQuadrupletRepresentation                  // xxxxxxxx
+	HashedHexadecimalTripletRepresentation               // #xxxxxx
+	HashedHexadecimalQuadrupletRepresentation            // #xxxxxxxx
+	RGBFunctionRepresentation                            // rgb(r,g,b)
+	RGBAFunctionRepresentation                           // rgba(r,g,b,a)
+	HSLFunctionRepresentation                            // hsl(h,s,l)
+	HSLAFunctionRepresentation                           // hsla(h,s,l,a)
 )
 
 // MakeCSSColorRepresentation generates a legal CSS color value from a color.Color
 func MakeCSSColorRepresentation(colorValue color.Color, colorRepresentation int) string {
 	switch colorRepresentation {
-	case HexTripletRepresentation:
+	case HexadecimalTripletRepresentation:
+		colorRGBA := color.RGBAModel.Convert(colorValue).(color.RGBA)
+		return fmt.Sprintf("%02X%02X%02X", colorRGBA.R, colorRGBA.G, colorRGBA.B)
+	case HexadecimalQuadrupletRepresentation:
+		colorRGBA := color.RGBAModel.Convert(colorValue).(color.RGBA)
+		return fmt.Sprintf("%02X%02X%02X%02X", colorRGBA.R, colorRGBA.G, colorRGBA.B, colorRGBA.A)
+	case HashedHexadecimalTripletRepresentation:
 		colorRGBA := color.RGBAModel.Convert(colorValue).(color.RGBA)
 		return fmt.Sprintf("#%02X%02X%02X", colorRGBA.R, colorRGBA.G, colorRGBA.B)
-	case HexQuadrupletRepresentation:
+	case HashedHexadecimalQuadrupletRepresentation:
 		colorRGBA := color.RGBAModel.Convert(colorValue).(color.RGBA)
 		return fmt.Sprintf("#%02X%02X%02X%02X", colorRGBA.R, colorRGBA.G, colorRGBA.B, colorRGBA.A)
 	case RGBFunctionRepresentation:
