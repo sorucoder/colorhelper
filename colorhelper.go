@@ -202,6 +202,11 @@ func relativeLuminance(c color.Color) float64 {
 	return 0.2126*r + 0.7152*g + 0.0722*b
 }
 
+// lerp linearly interpolates between a and b at t.
+func lerp(a, b, t float64) float64 {
+	return (1.0-t)*a + t*b
+}
+
 // EqualColors returns true if both colors converted to the RGBA colorspace are equal.
 func EqualColors(c1, c2 color.Color) bool {
 	r1, g1, b1, a1 := c1.RGBA()
@@ -209,7 +214,19 @@ func EqualColors(c1, c2 color.Color) bool {
 	return r1 == r2 && g1 == g2 && b1 == b2 && a1 == a2
 }
 
-// PickBestTextColor compares each of the given text colors and chooses the best one for the given background color.
+// MixColors mixes two colors according to the given ratio.
+func MixColors(color1, color2 color.Color, ratio float64) color.Color {
+	color1SRGBA := SRGBAModel.Convert(color1).(SRGBA)
+	color2SRGBA := SRGBAModel.Convert(color2).(SRGBA)
+	var color3SRGBA SRGBA
+	color3SRGBA.R = lerp(color1SRGBA.R, color2SRGBA.R, ratio)
+	color3SRGBA.G = lerp(color1SRGBA.G, color2SRGBA.G, ratio)
+	color3SRGBA.B = lerp(color1SRGBA.B, color2SRGBA.B, ratio)
+	color3SRGBA.A = lerp(color1SRGBA.A, color2SRGBA.A, ratio)
+	return color3SRGBA
+}
+
+// PickBestTextColor compares each of the given text colors and chooses the best one for the given background color (i.e. the one that constrasts the most).
 // If no text colors are given, this function chooses between black and white.
 func PickBestTextColor(backgroundColor color.Color, textColors ...color.Color) color.Color {
 	backgroundColorRelativeLuminance := relativeLuminance(backgroundColor)
@@ -242,9 +259,10 @@ func PickBestTextColor(backgroundColor color.Color, textColors ...color.Color) c
 	}
 }
 
-// ParseColorRepresentation parses a legal CSS color value into a color.Color
-// The model of the returned color will be the same as the value passed in
-// For example, if the CSS value uses the hsl() function, its color model will be colorhelper.HSLAModel
+// ParseColorRepresentation parses a legal color representation into a color.Color.
+// See the package comment for what a legal color representation is.
+// The model of the returned color will be the same as the value passed in.
+// For example, if the representation uses the hsl() function, its color model will be colorhelper.HSLAModel
 func ParseColorRepresentation(colorRepresentation string) (color.Color, error) {
 	if hexadecimalTripletRegexp.MatchString(colorRepresentation) {
 		hexTripletValue := hexadecimalTripletRegexp.FindStringSubmatch(colorRepresentation)
@@ -485,6 +503,7 @@ const (
 )
 
 // MakeColorRepresentation generates a legal color representation from a color.Color
+// See the package comment for what a legal color representation is.
 func MakeColorRepresentation(colorValue color.Color, colorRepresentation int) string {
 	switch colorRepresentation {
 	case HexadecimalTripletRepresentation:

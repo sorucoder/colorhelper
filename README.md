@@ -9,6 +9,7 @@
 * Function to parse legal CSS color values into `color.Color` values.
 * Function to generate legal CSS color values from `color.Color` values.
 * Function to choose the best text color for a given background color.
+* Function to mix colors.
 * Template function to tweak a CSS color value.
 * Template function to to choose the best text color for a given background color.
 
