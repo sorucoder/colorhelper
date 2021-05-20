@@ -4,10 +4,10 @@
 
 ## Features
 
-* sRGB type compatible with the go `color.Color` and `color.Model` interfaces.
+* sRGBA type compatible with the go `color.Color` and `color.Model` interfaces.
 * HSLA type compatible with the go `color.Color` and `color.Model` interfaces.
-* Function to parse legal CSS color values into `color.Color` values.
-* Function to generate legal CSS color values from `color.Color` values.
+* Function to parse representations of colors into `color.Color` values.
+* Function to generate representations of colors from `color.Color` values.
 * Function to choose the best text color for a given background color.
 * Function to mix colors.
 * Template function to tweak a CSS color value.
